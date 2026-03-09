@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GameState } from '../Components/Game/types';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface StartParams {
   WordLength: number;
@@ -26,6 +27,15 @@ export function useStartGame() {
     onSuccess: (newGame) => {
       queryClient.setQueryData(['game', newGame.gameId], newGame);
       navigate(`/game/${newGame.gameId}`);
-    }
+    },
+    onError: (error: Error) => {
+        navigate("/");
+        toast.error(`Game failed: ${error.message}`, {
+          position: "top-right",
+          autoClose: 5000,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      },
   });
 }

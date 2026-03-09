@@ -20,3 +20,20 @@ export const getLanguage = (language: string) => {
       return "en";
   }
 };
+
+export const getDifficulty = (difficulty: string) => {
+  switch (difficulty) {
+    case "Easy":
+      return 1;
+    case "Medium-Easy":
+      return 2;
+    case "Medium":
+      return 3;
+    case "Medium-Hard":
+      return 4;
+    case "Hard":
+      return 5;
+    default:
+      return 3;
+  }
+};

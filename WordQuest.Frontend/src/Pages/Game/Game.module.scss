@@ -3,8 +3,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    height: 100vh;
     gap: 20px;
+    background-color: #1e293b;
+    color: #f8fafc;
+    flex: 1;
+    padding-bottom: 40px;
 }
 .newGameButton{
     margin-top: 20px;

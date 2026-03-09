@@ -5,6 +5,7 @@ import Keyboard from "../../Components/Game/Keyboard/Keyboard";
 import classes from "./Game.module.scss";
 import { useState } from "react";
 import { useGetGame } from "../../hooks/useGetGame";
+import TileColorsSection from "../../Components/Game/GameDescription/TileColorsSection";
 
 function Game() {
   const [currentGuess, setCurrentGuess] = useState<string>("");
@@ -17,11 +18,12 @@ function Game() {
       GameId: gameId || "",
       Guess: currentGuess,
     });
-    setRevealed(!revealed)
+    setRevealed(!revealed);
     setCurrentGuess("");
   };
-  const wordLen = data?.isFromApi ? data?.wordLength : 5
-  const disableKeyboard = currentGuess.length !== 0 && currentGuess.length === wordLen;
+  const wordLen = data?.isFromApi ? data?.wordLength : 5;
+  const fullGuessLength = currentGuess.length === wordLen;
+  const disableKeyboard = currentGuess.length !== 0 && fullGuessLength;
   return (
     <div className={classes.game}>
       {data?.isGameOver ? (
@@ -29,8 +31,14 @@ function Game() {
       ) : (
         <h1>Game Started!</h1>
       )}
-      <p>Difficulty: {data?.difficulty}</p>
-      <p>Language: {data?.isFromApi ? data?.language.toLocaleUpperCase() : "EN"}</p>
+      <div>
+        <p>Difficulty: {data?.difficulty}</p>
+        <p>
+          Language:{" "}
+          {data?.isFromApi ? data?.language.toLocaleUpperCase() : "EN"}
+        </p>
+      </div>
+      <TileColorsSection />
       <Gameboard
         revealed={revealed}
         currentGuess={currentGuess}
@@ -39,13 +47,15 @@ function Game() {
         maxAttempts={data?.maxAttempts || 5}
       />
       <Keyboard
-        isGameOver={data?.isGameOver || false}
+        isGameOver={data?.isGameOver}
         disableKeys={disableKeyboard}
         setGuess={setCurrentGuess}
         onEnter={() => handleEnter()}
+        language={data?.language}
+        enableEnter={fullGuessLength}
       />
       {data?.isGameOver && (
-        <Link to={'/'} className={classes.newGameButton}>
+        <Link to={"/"} className={classes.newGameButton}>
           New Game
         </Link>
       )}

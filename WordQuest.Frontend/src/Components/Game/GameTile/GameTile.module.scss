@@ -16,17 +16,18 @@
   align-items: center;
   font-weight: bold;
   font-size: 1.5rem;
-  border: 2px solid #ccc;
+  border: 2px solid #d3d6da;
   border-radius: 5px;
 }
 
 .front {
-  background: #eee;
+  background: #1e293b;
+  border: 1px solid #878a8c;
 }
 
 .back {
   transform: rotateX(180deg);
-  &.isCorrect { background: green; color: white; }
-  &.isPresent { background: yellow; color: black; }
-  &.isAbsent { background: gray; color: white; }
+  &.isCorrect { background: #22c55e; color: white; }
+  &.isPresent { background: #f59e0b; color: black; }
+  &.isAbsent { background: #6b7280; color: white; }
 }

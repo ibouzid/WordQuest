@@ -2,8 +2,9 @@ import React from "react";
 import classes from "./Home.module.scss";
 import Select from "../../Components/Select/Select";
 import { useStartGame } from "../../hooks/useStartGame";
-import { getLanguage } from "../../utils/utils";
+import { getDifficulty, getLanguage } from "../../utils/utils";
 import { FaSpinner } from "react-icons/fa";
+import GameDescription from "../../Components/Game/GameDescription/GameDescription";
 
 function Home() {
   const [showDifficulty, setShowDifficulty] = React.useState(false);
@@ -18,13 +19,14 @@ function Home() {
     mutate({
       WordLength: parseInt(wordLength),
       Language: getLanguage(language),
-      Difficulty: parseInt(difficulty),
+      Difficulty: getDifficulty(difficulty),
     });
   };
   if (error) return <div>Error: {error.message}</div>;
   return (
     <div className={classes.mainContainer}>
       <h1>Welcome to WordQuest!</h1>
+      <h3>Select a word length, difficulty and language: </h3>
       <div className={classes.flex}>
         <Select
           label="Word Length:"
@@ -54,7 +56,7 @@ function Home() {
         />
         <Select
           label="Difficulty:"
-          options={["1", "2", "3", "4", "5"]}
+          options={["Easy", "Medium-Easy", "Medium", "Medium-Hard", "Hard"]}
           value={difficulty}
           isOpen={showDifficulty}
           onToggle={() => setShowDifficulty(!showDifficulty)}
@@ -84,6 +86,7 @@ function Home() {
           }}
         />
       </div>
+      <GameDescription />
       <button className={classes.button} onClick={handleStart}>
         {isPending ? <FaSpinner className={classes.spin} /> : "Start Game"}
       </button>

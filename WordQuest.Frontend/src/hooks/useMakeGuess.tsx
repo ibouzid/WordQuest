@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GameState } from '../Components/Game/types';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface GuessParams {
   GameId: string;
@@ -19,12 +21,21 @@ const makeGuess = async (params: GuessParams): Promise<GameState> => {
 
 export function useMakeGuess() {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: (params: GuessParams) => makeGuess(params), 
     onSuccess: (updatedGameState) => {
       queryClient.setQueryData(['game', updatedGameState.gameId], updatedGameState);
       queryClient.setQueryData(['startGame'], updatedGameState);
-    }
+    },
+    onError: (error: Error) => {
+    navigate("/");
+    toast.error(`Game failed: ${error.message}`, {
+      position: "top-right",
+      autoClose: 5000,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  },
   });
 }

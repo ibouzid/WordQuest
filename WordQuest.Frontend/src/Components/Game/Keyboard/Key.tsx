@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import classes from './Keyboard.module.scss';
 
-export default function Key({letter, status, onClick}: {letter: string, status: "used" | "unused", onClick: () => void}) {
+export default memo(function Key({letter, status, onClick}: {letter: string, status: "used" | "unused", onClick: () => void}) {
     const getColor = () => {
         switch (status) {
             case "used":
@@ -14,4 +15,4 @@ export default function Key({letter, status, onClick}: {letter: string, status: 
   return (
     <div onClick={onClick} className={`${classes.key} ${getColor()}`}>{letter}</div>
   )
-}
+})
