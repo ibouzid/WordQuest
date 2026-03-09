@@ -9,19 +9,23 @@ const letters = [
 export default function Keyboard({
   setGuess,
   onEnter,
-  isDisabled,
+  disableKeys,
+  isGameOver
+
 }: {
   setGuess: React.Dispatch<React.SetStateAction<string>>;
   onEnter: () => void;
-  isDisabled?: boolean;
+  disableKeys: boolean;
+  isGameOver: boolean;
 }) {
   const handleKeyPress = (key: string) => {
-    if (isDisabled) return;
+    if(isGameOver) return;
     if (key === "Backspace") {
       setGuess((prev) => prev.slice(0, -1));
     } else if (key === "Enter") {
       onEnter();
-    } else if (letters.flat().includes(key)) {
+    } else if (disableKeys) return;
+    else if (letters.flat().includes(key)) {
       setGuess((prev) => prev + key);
     }
   };

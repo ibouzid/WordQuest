@@ -1,7 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddHttpClient<WordService>();
+builder.Services.AddHttpClient<WordService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 builder.Services.AddSingleton<GameService>();
 builder.Services.AddCors(options =>
 {

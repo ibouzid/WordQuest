@@ -18,7 +18,6 @@ export default function Gameboard({
   maxAttempts,
   wordLength
 }: Props) {
-
   const emptyRows = maxAttempts - guesses.length - 1;
   return (
     <div className={classes.gameboard}>

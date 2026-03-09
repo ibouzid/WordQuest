@@ -13,7 +13,6 @@ public class WordService
     {
         try
         {
-            _http.Timeout = TimeSpan.FromSeconds(10);
             var url = $"https://random-word-api.herokuapp.com/word?length={length}&lang={language}&diff={difficulty}";
             var words = await _http.GetFromJsonAsync<string[]>(url);
 
@@ -24,8 +23,9 @@ public class WordService
                     IsFromApi = true
                 };
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"Random word API failed: {ex.Message}");
         }
 
         var fallback = _fallbackWords

@@ -20,7 +20,8 @@ function Game() {
     setRevealed(!revealed)
     setCurrentGuess("");
   };
-  console.log({data})
+  const wordLen = data?.isFromApi ? data?.wordLength : 5
+  const disableKeyboard = currentGuess.length !== 0 && currentGuess.length === wordLen;
   return (
     <div className={classes.game}>
       {data?.isGameOver ? (
@@ -29,16 +30,17 @@ function Game() {
         <h1>Game Started!</h1>
       )}
       <p>Difficulty: {data?.difficulty}</p>
-      <p>Language: {data?.IsFromApi ? data?.language.toLocaleUpperCase() : "EN"}</p>
+      <p>Language: {data?.isFromApi ? data?.language.toLocaleUpperCase() : "EN"}</p>
       <Gameboard
         revealed={revealed}
         currentGuess={currentGuess}
-        wordLength={data?.IsFromApi ? data?.wordLength : 5}
+        wordLength={data?.isFromApi ? data?.wordLength : 5}
         guesses={data?.guesses || []}
         maxAttempts={data?.maxAttempts || 5}
       />
       <Keyboard
-        isDisabled={data?.isGameOver}
+        isGameOver={data?.isGameOver || false}
+        disableKeys={disableKeyboard}
         setGuess={setCurrentGuess}
         onEnter={() => handleEnter()}
       />

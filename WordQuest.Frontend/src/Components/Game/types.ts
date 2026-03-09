@@ -30,5 +30,5 @@ export interface GameState {
 
   secretWord?: string;
 
-  IsFromApi: boolean;
+  isFromApi: boolean;
 }
