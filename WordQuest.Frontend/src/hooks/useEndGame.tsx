@@ -3,32 +3,27 @@ import type { GameState } from '../Components/Game/types';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-interface StartParams {
-  WordLength: number;
-  Language: string;
-  Difficulty: number;
-  GuessAttempts: number;
-  Timer: number;
+interface GameEndRequest {
+  GameId: string;
 }
 
-const startGame = async (params: StartParams): Promise<GameState> => {
-  const response = await fetch('http://localhost:5214/api/game/start', {
+const endGame = async (GameEndRequest: GameEndRequest): Promise<GameState> => {
+  const response = await fetch('http://localhost:5214/api/game/end', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params),
+    body: JSON.stringify(GameEndRequest),
   });
-  if (!response.ok) throw new Error('Failed to start game');
+  if (!response.ok) throw new Error('Failed to end game');
   return response.json();
 };
 
-export function useStartGame() {
+export function useEndGame() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: (params: StartParams) => startGame(params),
+    mutationFn: (gameId: string) => endGame({ GameId: gameId }),
     onSuccess: (newGame) => {
       queryClient.setQueryData(['game', newGame.gameId], newGame);
-      navigate(`/game/${newGame.gameId}`);
     },
     onError: (error: Error) => {
         navigate("/");

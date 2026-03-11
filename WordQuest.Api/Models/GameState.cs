@@ -20,4 +20,6 @@ public class GameState
 
     public bool IsFromApi { get; set; }
 
+    public int Timer { get; set; } = 0;
+
 }

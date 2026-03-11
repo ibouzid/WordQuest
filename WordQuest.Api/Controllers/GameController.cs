@@ -16,7 +16,13 @@ public class GameController : ControllerBase
     [HttpPost("start")]
     public async Task<IActionResult> StartGame([FromBody] GameSettings request)
     {
-        var game = await _gameService.StartGame(request.WordLength, request.Language, request.Difficulty);
+        var game = await _gameService.StartGame(request.WordLength, request.Language, request.Difficulty, request.GuessAttempts, request.Timer);
+        return Ok(game);
+    }
+    [HttpPost("end")]
+    public async Task<IActionResult> EndGame([FromBody] GameEndRequest request)
+    {
+        var game = _gameService.EndGame(request.GameId);
         return Ok(game);
     }
 

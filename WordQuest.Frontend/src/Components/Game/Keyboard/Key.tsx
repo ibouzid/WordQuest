@@ -12,7 +12,12 @@ export default memo(function Key({letter, status, onClick}: {letter: string, sta
                 return "";
         }
     }
+    const getSpecialClass = () => {
+        if (letter === "Backspace") return classes.backSpace;
+        if (letter === "Enter") return classes.enter;
+        return "";
+    }
   return (
-    <div onClick={onClick} className={`${classes.key} ${getColor()}`}>{letter}</div>
+    <div onClick={onClick} className={`${classes.key} ${getColor()} ${getSpecialClass()}`}>{letter}</div>
   )
 })

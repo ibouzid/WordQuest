@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Key from "./Key";
 
 const letters = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-  ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Backspace"],
-  ["Z", "X", "C", "V", "B", "N", "M", "Enter"],
+  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+  ["Z", "X", "C", "V", "B", "N", "M"],
+  ["Backspace", "Enter"],
 ];
 
 const extraKeys: Record<string, string[]> = {
@@ -41,6 +42,7 @@ type Props = {
   isGameOver?: boolean;
   language?: string;
   enableEnter: boolean;
+  guess: string;
 };
 
 export default function Keyboard({
@@ -50,27 +52,43 @@ export default function Keyboard({
   isGameOver = false,
   language = "English",
   enableEnter,
+  guess,
 }: Props) {
   const keyboard = React.useMemo(
     () => [extraKeys[language] || []].concat(letters),
     [language],
   );
   const flatKeys = React.useMemo(() => keyboard.flat(), [keyboard]);
-
+  const [usedKeys, setUsedKeys] = useState<Set<string>>(new Set());
+  const handleEnter = useCallback(
+    (guess: string) => {
+      setUsedKeys(prev => new Set([...prev, ...guess]));
+      onEnter();
+    },
+    [onEnter],
+  )
   const keyHandlers = React.useMemo(() => {
     const map: Record<string, () => void> = {};
     flatKeys.forEach((key) => {
       map[key] = () => {
         if (isGameOver) return;
         if (key === "Backspace") setGuess((prev) => prev.slice(0, -1));
-        else if (key === "Enter" && enableEnter) onEnter();
+        else if (key === "Enter" && enableEnter) handleEnter(guess);
         else if (key === "Enter" && !enableEnter) return;
         else if (disableKeys) return;
         else setGuess((prev) => prev + key);
       };
     });
     return map;
-  }, [disableKeys, flatKeys, isGameOver, onEnter, setGuess, enableEnter]);
+  }, [
+    disableKeys,
+    flatKeys,
+    isGameOver,
+    setGuess,
+    enableEnter,
+    guess,
+    handleEnter,
+  ]);
 
   return (
     <div>
@@ -80,7 +98,7 @@ export default function Keyboard({
             <Key
               key={letter}
               letter={letter}
-              status="unused"
+              status={usedKeys.has(letter) ? "used" : 'unused'}
               onClick={keyHandlers[letter]}
             />
           ))}

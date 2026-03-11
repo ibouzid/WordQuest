@@ -1,25 +1,95 @@
-.game{
+
+.game {
+  align-items: center;
+  min-height: 100vh;
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 20px;
+  gap: 30px;
+  font-family: "Inter", sans-serif;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #f8fafc;
+    display: flex;
+    justify-content: center;
+  }
+  .game-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    gap: 20px;
-    background-color: #1e293b;
-    color: #f8fafc;
-    flex: 1;
-    padding-bottom: 40px;
-}
-.newGameButton{
-    margin-top: 20px;
-    padding: 10px;
-    width: 180px;
-    background-color: aquamarine;
-    color: black;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+  }
+  .game-info {
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    width: fit-content;
+    gap: 30px;
+    background-color: #334155;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+
+    p {
+      margin: 0;
+      font-weight: 500;
+      font-size: 1rem;
+      text-transform: capitalize;
+    }
+  }
+
+  .tile-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
-    cursor: pointer;
+  }
+
+  .gameboard-wrapper {
+    width: 100%;
+    max-width: 600px;
+    background-color: #1e293b;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .keyboard-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .gameover-modal-wrapper {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+.close {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: #facc15;
+  color: #000;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    transform 0.2s;
+  &:hover {
+    background-color: #eab308;
+    transform: scale(1.05);
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 }

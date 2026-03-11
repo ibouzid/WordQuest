@@ -16,7 +16,8 @@ public class GameService
         IsGameOver = game.IsGameOver,
         MaxAttempts = game.MaxAttempts,
         SecretWord = game.IsGameOver ? game.SecretWord : null,
-        IsFromApi = game.IsFromApi
+        IsFromApi = game.IsFromApi,
+        Timer = game.Timer
     };
 }
 
@@ -42,8 +43,21 @@ public class GameService
 
         return null;
     }
+    public GameState EndGame(string gameId)
+    {
+        var game = GetGame(gameId);
+        if (game == null)
+        {
+            return null;
+        }
+        else
+        {
+            game.IsGameOver = true;
+            return game;
+        }
+    }
 
-    public async Task<GameDto> StartGame(int wordLength = 5, string language = "en", int difficulty = 3)
+    public async Task<GameDto> StartGame(int wordLength = 5, string language = "en", int difficulty = 3, int guessAttempts = 5, int timer = 0)
     {
         var word = await _wordService.GetRandomWord(wordLength, language, difficulty);
 
@@ -54,7 +68,9 @@ public class GameService
             Difficulty = difficulty,
             Language = language,
             WordLength = wordLength,
-            IsFromApi = word.IsFromApi
+            IsFromApi = word.IsFromApi,
+            MaxAttempts = guessAttempts,
+            Timer = timer
         };
 
         _games[game.GameId] = game;
