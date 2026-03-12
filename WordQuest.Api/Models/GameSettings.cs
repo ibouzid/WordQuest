@@ -9,4 +9,9 @@ public class GameSettings
     public int GuessAttempts { get; set; } = 5;
 
     public int Timer { get; set; } = 0;
+
+    public string Mode { get; set; } = "SinglePlayer";
+
+    public string? PlayerId { get; set; }
+
 }

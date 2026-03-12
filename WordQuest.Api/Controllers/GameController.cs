@@ -16,7 +16,7 @@ public class GameController : ControllerBase
     [HttpPost("start")]
     public async Task<IActionResult> StartGame([FromBody] GameSettings request)
     {
-        var game = await _gameService.StartGame(request.WordLength, request.Language, request.Difficulty, request.GuessAttempts, request.Timer);
+        var game = await _gameService.StartGame(request);
         return Ok(game);
     }
     [HttpPost("end")]
@@ -29,7 +29,7 @@ public class GameController : ControllerBase
     [HttpPost("guess")]
     public async Task<IActionResult> MakeGuess([FromBody] GuessRequest request)
     {
-        var game = _gameService.MakeGuess(request.GameId, request.Guess.ToUpper());
+        var game = _gameService.MakeGuess(request.GameId, request.Guess.ToUpper(), request.PlayerId);
 
         _logger.LogInformation("Game {GameId}: Received guess '{Guess}'", request.GameId, request.Guess);
         _logger.LogInformation("Game: {Game}", game);

@@ -46,6 +46,16 @@
   &:active {
     transform: translateY(0);
   }
+  &:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+.error {
+  color: #f87171;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .spin {

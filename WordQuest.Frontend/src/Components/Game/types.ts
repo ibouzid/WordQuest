@@ -10,13 +10,21 @@ export type GuessResult = {
   guess: string;
   feedback: LetterState[];
 };
+export interface PlayerState {
+  playerId: string;
+  connectionId: string;
+  guesses: GuessResult[];
+  solved: boolean;
+  solvedAt?: Date;
+  score: number;
+}
 
 export interface GameState {
   gameId: string;
 
   attempts: number;
 
-  guesses: GuessResult[];
+  players: PlayerState[];
 
   maxAttempts: number;
 
@@ -33,4 +41,6 @@ export interface GameState {
   isFromApi: boolean;
 
   timer: number;
+
+  mode: "SinglePlayer" | "Multiplayer";
 }

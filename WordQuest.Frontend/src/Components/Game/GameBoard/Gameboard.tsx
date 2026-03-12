@@ -9,7 +9,6 @@ type Props = {
   maxAttempts: number;
   guesses: GuessResult[];
   currentGuess: string;
-  revealed?: boolean;
 };
 
 export default function Gameboard({

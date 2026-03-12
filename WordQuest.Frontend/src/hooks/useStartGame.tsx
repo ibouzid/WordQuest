@@ -9,6 +9,9 @@ interface StartParams {
   Difficulty: number;
   GuessAttempts: number;
   Timer: number;
+  Mode: "SinglePlayer" | "Multiplayer";
+  PlayerId: string;
+  GameId?: string;
 }
 
 const startGame = async (params: StartParams): Promise<GameState> => {

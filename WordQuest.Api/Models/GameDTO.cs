@@ -15,4 +15,8 @@ public class GameDto
 
     public bool IsFromApi { get; set; }
 
+    public string Mode { get; set; }
+
+    public List<PlayerState> Players { get; set; }
+
 }

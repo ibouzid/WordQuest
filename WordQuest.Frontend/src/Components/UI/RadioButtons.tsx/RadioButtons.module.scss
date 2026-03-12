@@ -1,0 +1,17 @@
+.radioButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.input {
+//   display: none;
+}
+.label {
+  padding: 0.5rem 1rem;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  background-color: #1e293b;
+  color: #fcd34d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}

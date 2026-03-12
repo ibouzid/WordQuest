@@ -4,9 +4,9 @@ public class GameState
 
     public required string SecretWord { get; set; }
 
-    public int Attempts { get; set; }
+    // public int Attempts { get; set; }
 
-    public List<GuessResult> Guesses { get; set; } = new();
+    public object Lock = new();
 
     public int MaxAttempts { get; set; } = 5;
 
@@ -21,5 +21,9 @@ public class GameState
     public bool IsFromApi { get; set; }
 
     public int Timer { get; set; } = 0;
+
+    public string Mode { get; set; }
+
+    public List<PlayerState> Players { get; set; } = new List<PlayerState>();
 
 }

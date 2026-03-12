@@ -24,19 +24,19 @@ export default function Select({
         {value}
       </button>
 
-      <div
-        className={`${classes.list} ${isOpen ? classes.open : ""}`}
-      >
-        {options.map((option) => (
-          <button
-            key={option}
-            className={classes.option}
-            onClick={() => onSelect(option)}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
+      {isOpen && (
+        <div className={`${classes.list} ${isOpen ? classes.open : ""}`}>
+          {options.map((option) => (
+            <button
+              key={option}
+              className={classes.option}
+              onClick={() => onSelect(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

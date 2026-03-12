@@ -5,21 +5,23 @@ public class GameService
     private readonly ConcurrentDictionary<string, GameState> _games = new();
     private readonly WordService _wordService;
     private GameDto MapToDto(GameState game)
-{
-    return new GameDto
     {
-        GameId = game.GameId,
-        Difficulty = game.Difficulty,
-        Language = game.Language,
-        WordLength = game.WordLength,
-        Guesses = game.Guesses,
-        IsGameOver = game.IsGameOver,
-        MaxAttempts = game.MaxAttempts,
-        SecretWord = game.IsGameOver ? game.SecretWord : null,
-        IsFromApi = game.IsFromApi,
-        Timer = game.Timer
-    };
-}
+        return new GameDto
+        {
+            GameId = game.GameId,
+            Difficulty = game.Difficulty,
+            Language = game.Language,
+            WordLength = game.WordLength,
+            // Guesses = game.Guesses,
+            IsGameOver = game.IsGameOver,
+            MaxAttempts = game.MaxAttempts,
+            SecretWord = game.IsGameOver ? game.SecretWord : null,
+            IsFromApi = game.IsFromApi,
+            Timer = game.Timer,
+            Mode = game.Mode,
+            Players = game.Players
+        };
+    }
 
     public GameService(WordService wordService)
     {
@@ -57,82 +59,124 @@ public class GameService
         }
     }
 
-    public async Task<GameDto> StartGame(int wordLength = 5, string language = "en", int difficulty = 3, int guessAttempts = 5, int timer = 0)
+    public async Task<GameDto> StartGame(GameSettings settings)
     {
-        var word = await _wordService.GetRandomWord(wordLength, language, difficulty);
+        var word = await _wordService.GetRandomWord(settings.WordLength, settings.Language, settings.Difficulty);
 
         var game = new GameState
         {
             GameId = Guid.NewGuid().ToString(),
             SecretWord = word.Word.ToUpper(),
-            Difficulty = difficulty,
-            Language = language,
-            WordLength = wordLength,
+            Difficulty = settings.Difficulty,
+            Language = settings.Language,
+            WordLength = settings.WordLength,
             IsFromApi = word.IsFromApi,
-            MaxAttempts = guessAttempts,
-            Timer = timer
+            MaxAttempts = settings.GuessAttempts,
+            Timer = settings.Timer,
+            Mode = settings.Mode,
+            Players = new List<PlayerState>()
         };
-
+        game.Players.Add(new PlayerState
+        {
+            PlayerId = settings.PlayerId
+        });
+        
         _games[game.GameId] = game;
 
         return MapToDto(game);
     }
-    public GameDto? MakeGuess(string gameId, string guess)
+    public GameDto? MakeGuess(string gameId, string guess, string playerId = "default")
     {
         var game = GetGame(gameId);
-        Console.WriteLine($"Game {gameId}: Received guess '{guess}'");
-        Console.WriteLine($"Game state before guess: {game.SecretWord}");
         if (game == null)
         {
             return null;
         }
-        if (guess.Length != game.SecretWord.Length)
+        lock (game.Lock)
         {
-            throw new Exception("Guess must match word length");
-        }
 
-        var secretWord = game.SecretWord;
-        var feedback = new List<LetterState>();
-        if (guess == secretWord)
-        {
-            feedback = Enumerable.Repeat(LetterState.Correct, secretWord.Length).ToList();
-            game.Guesses.Add(new GuessResult
+            if (guess.Length != game.SecretWord.Length)
+            {
+                throw new Exception("Guess must match word length");
+            }
+            if (game.IsGameOver)
+            {
+                throw new Exception("Game already finished");
+            }
+
+            var secretWord = game.SecretWord;
+            var secretLetters = secretWord.ToHashSet();
+            var feedback = new List<LetterState>();
+            var player = game.Players.FirstOrDefault(p => p.PlayerId == playerId);
+
+            if (player == null)
+            {
+                throw new Exception("Player not found");
+            }
+            if (guess == secretWord)
+            {
+                var gameSolved = game.Players.All(p => p.Guesses.Count == game.MaxAttempts);
+                feedback = Enumerable.Repeat(LetterState.Correct, secretWord.Length).ToList();
+                player.Guesses.Add(new GuessResult
+                {
+                    Guess = guess,
+                    Feedback = feedback
+                });
+                // game.Attempts++;
+                game.IsGameOver = game.Mode == "SinglePlayer" ? true : gameSolved;
+                return MapToDto(game);
+            }
+            for (int i = 0; i < guess.Length; i++)
+            {
+                if (guess[i] == secretWord[i])
+                {
+                    feedback.Add(LetterState.Correct);
+                }
+                else if (secretLetters.Contains(guess[i]))
+                {
+                    feedback.Add(LetterState.Present);
+                }
+                else
+                {
+                    feedback.Add(LetterState.Absent);
+                }
+            }
+
+            player.Guesses.Add(new GuessResult
             {
                 Guess = guess,
                 Feedback = feedback
             });
-            game.Attempts++;
-            game.IsGameOver = true;
+            // game.Attempts++;
+
+            // if (game.Players.All(p => p.Guesses.Count == game.MaxAttempts))
+            // {
+            //     game.IsGameOver = true;
+            // }
+
             return MapToDto(game);
         }
-        for (int i = 0; i < guess.Length; i++)
+
+    }
+    
+    public GameState? AddOrReconnectPlayer(string gameId, string connectionId, string playerId)
+    {
+        var game = GetGame(gameId);
+
+        var player = game?.Players
+            .FirstOrDefault(p => p.PlayerId == playerId);
+        if(player == null && game != null)
         {
-            if (guess[i] == secretWord[i])
+            player = new PlayerState
             {
-                feedback.Add(LetterState.Correct);
-            }
-            else if (secretWord.Contains(guess[i]))
-            {
-                feedback.Add(LetterState.Present);
-            }
-            else
-            {
-                feedback.Add(LetterState.Absent);
-            }
+                PlayerId = playerId,
+                ConnectionId = connectionId
+            };
+            game.Players.Add(player);
         }
+        if (player != null)
+            player.ConnectionId = connectionId;
 
-        game.Guesses.Add(new GuessResult
-        {
-            Guess = guess,
-            Feedback = feedback
-        });
-        game.Attempts++;
-
-        if (game.Attempts >= game.MaxAttempts)
-        {
-            game.IsGameOver = true;
-        }
-
-        return MapToDto(game);
+        return game;
     }
 }

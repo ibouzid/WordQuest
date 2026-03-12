@@ -13,12 +13,14 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("http://localhost:5173")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 app.UseCors("AllowFrontend");
-
 app.MapControllers();
-
+app.MapHub<GameHub>("/gamehub");
 app.Run();

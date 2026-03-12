@@ -46,6 +46,13 @@
     display: flex;
     justify-content: center;
   }
+  .gameboard-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
 
   .gameboard-wrapper {
     width: 100%;
@@ -54,7 +61,17 @@
     padding: 10px;
     border-radius: 10px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+  }
+  .gameboard-wrapper:not(:last-child) {
+    margin-right: 20px;
+  }
+  .game-id{
+    font-size: 2rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
   }
 
   .keyboard-wrapper {

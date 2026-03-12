@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 interface GuessParams {
   GameId: string;
   Guess: string;
+  PlayerId: string;
 }
 
 const makeGuess = async (params: GuessParams): Promise<GameState> => {
