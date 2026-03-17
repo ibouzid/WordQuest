@@ -111,3 +111,12 @@
     width: 100%;
   }
 }
+.settings{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  border: 12px double #fcd34d;
+  padding: 1.5rem;
+  border-radius: 8px;
+}

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GameState } from '../Components/Game/types';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { API_URL } from '../constants';
 
 interface GuessParams {
   GameId: string;
@@ -10,7 +11,7 @@ interface GuessParams {
 }
 
 const makeGuess = async (params: GuessParams): Promise<GameState> => {
-  const response = await fetch('http://localhost:5214/api/game/guess', {
+  const response = await fetch(`${API_URL}/guess`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),

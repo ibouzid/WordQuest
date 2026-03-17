@@ -17,8 +17,6 @@ public class GameHub : Hub
     var game = _gameService.AddOrReconnectPlayer(gameId, connectionId, playerId);
 
     await Groups.AddToGroupAsync(connectionId, gameId);
-
-    // await Clients.Caller.SendAsync("GameState", game);
     await Clients.Group(gameId).SendAsync("GameUpdated", game);
 }
 

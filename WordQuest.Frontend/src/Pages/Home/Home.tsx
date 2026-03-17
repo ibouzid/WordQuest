@@ -90,8 +90,7 @@ function Home() {
       },
     ];
 
-  const isStartDisabled =
-    !playerId || isPending;
+  const isStartDisabled = !playerId || isPending;
 
   const handleStart = () => {
     if (isStartDisabled) return;
@@ -127,65 +126,73 @@ function Home() {
         settings and embark on a quest to conquer the word challenges ahead!
       </h3>
       <GameDescription />
-      <h4 className={classes.subtitle}>Game Mode: {mode}</h4>
-      <RadioButtons
-        inputName="mode"
-        options={["SinglePlayer", "Multiplayer"]}
-        onChange={(val) => setMode(val)}
-      />
-      <TextInput
-        label="Player ID:"
-        value={playerId}
-        onChange={handlePlayerIdChange}
-      />
-      {mode === "Multiplayer" && (
-        <div>
+      <div className={classes.settings}>
+
         <TextInput
-          label="Room ID (for Multiplayer):"
-          value={gameId}
-          onChange={handleGameIdChange}
+          label="Player ID:"
+          value={playerId}
+          onChange={handlePlayerIdChange}
         />
-        <button className={classes.button} onClick={handleJoinRoom}>
-          Join Room
-        </button>
+        <h4 className={classes.subtitle}>Game Mode: {mode}</h4>
+        <RadioButtons
+          inputName="mode"
+          options={["SinglePlayer", "Multiplayer"]}
+          onChange={(val) => setMode(val)}
+        />
+        {mode === "Multiplayer" && (
+          <div>
+            <TextInput
+              label="Room ID (for Multiplayer):"
+              value={gameId}
+              onChange={handleGameIdChange}
+            />
+            <button className={classes.button} onClick={handleJoinRoom}>
+              Join Room
+            </button>
+          </div>
+        )}
+        <h3>
+          Select a word length, difficulty, language, number of attempts, and
+          time length:
+        </h3>
+
+        <div className={classes.flex}>
+          {selectConfigs.map(({ label, key, options }) => (
+            <Select
+              key={key}
+              label={label + ":"}
+              options={options}
+              value={settings[key]}
+              isOpen={openSelect[key]}
+              onToggle={() =>
+                setOpenSelect((prev) => ({
+                  wordLength: false,
+                  difficulty: false,
+                  language: false,
+                  guessAttempts: false,
+                  timer: false,
+                  [key]: !prev[key],
+                }))
+              }
+              onSelect={(val) => {
+                setSettings((prev) => ({ ...prev, [key]: val }));
+                setOpenSelect((prev) => ({ ...prev, [key]: false }));
+              }}
+            />
+          ))}
         </div>
-       
-      )}
-      <h3>
-        Select a word length, difficulty, language, number of attempts, and time
-        length:
-      </h3>
 
-      <div className={classes.flex}>
-        {selectConfigs.map(({ label, key, options }) => (
-          <Select
-            key={key}
-            label={label + ":"}
-            options={options}
-            value={settings[key]}
-            isOpen={openSelect[key]}
-            onToggle={() =>
-              setOpenSelect((prev) => ({
-                wordLength: false,
-                difficulty: false,
-                language: false,
-                guessAttempts: false,
-                timer: false,
-                [key]: !prev[key],
-              }))
-            }
-            onSelect={(val) => {
-              setSettings((prev) => ({ ...prev, [key]: val }));
-              setOpenSelect((prev) => ({ ...prev, [key]: false }));
-            }}
-          />
-        ))}
+        <button
+          disabled={isStartDisabled}
+          className={classes.button}
+          onClick={handleStart}
+        >
+          {isPending ? <FaSpinner className={classes.spin} /> : "Create Room"}
+        </button>
+        {isStartDisabled && (
+          <label className={classes.error}>Please Enter a Player Name</label>
+        )}
       </div>
-
-      <button disabled={isStartDisabled} className={classes.button} onClick={handleStart}>
-        {isPending ? <FaSpinner className={classes.spin} /> : "Start Game"}
-      </button>
-      {isStartDisabled && <label className={classes.error}>Please Enter a Player Name</label>}
     </div>
   );
 }

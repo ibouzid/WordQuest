@@ -13,7 +13,7 @@ export default function TextInput({
 }) {
   return (
     <div>
-      {label && <label className={classes.label}>{label}</label>}
+      {label && <p className={classes.label}>{label}</p>}
       <input
         className={classes.input}
         type="text"

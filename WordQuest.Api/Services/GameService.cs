@@ -80,7 +80,7 @@ public class GameService
         {
             PlayerId = settings.PlayerId
         });
-        
+
         _games[game.GameId] = game;
 
         return MapToDto(game);
@@ -95,6 +95,11 @@ public class GameService
         lock (game.Lock)
         {
 
+            var secretWord = game.SecretWord;
+            var secretLetters = secretWord.ToHashSet();
+            var feedback = new List<LetterState>();
+            var player = game.Players.FirstOrDefault(p => p.PlayerId == playerId);
+
             if (guess.Length != game.SecretWord.Length)
             {
                 throw new Exception("Guess must match word length");
@@ -104,10 +109,11 @@ public class GameService
                 throw new Exception("Game already finished");
             }
 
-            var secretWord = game.SecretWord;
-            var secretLetters = secretWord.ToHashSet();
-            var feedback = new List<LetterState>();
-            var player = game.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (player?.Guesses.Count >= game.MaxAttempts)
+            {
+                throw new Exception("You have exhausted your guesses.");
+            }
+
 
             if (player == null)
             {
@@ -122,7 +128,6 @@ public class GameService
                     Guess = guess,
                     Feedback = feedback
                 });
-                // game.Attempts++;
                 game.IsGameOver = game.Mode == "SinglePlayer" ? true : gameSolved;
                 return MapToDto(game);
             }
@@ -147,25 +152,24 @@ public class GameService
                 Guess = guess,
                 Feedback = feedback
             });
-            // game.Attempts++;
 
-            // if (game.Players.All(p => p.Guesses.Count == game.MaxAttempts))
-            // {
-            //     game.IsGameOver = true;
-            // }
+            if (game.Players.All(p => p.Guesses.Count == game.MaxAttempts))
+            {
+                game.IsGameOver = true;
+            }
 
             return MapToDto(game);
         }
 
     }
-    
+
     public GameState? AddOrReconnectPlayer(string gameId, string connectionId, string playerId)
     {
         var game = GetGame(gameId);
 
         var player = game?.Players
             .FirstOrDefault(p => p.PlayerId == playerId);
-        if(player == null && game != null)
+        if (player == null && game != null)
         {
             player = new PlayerState
             {

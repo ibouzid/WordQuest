@@ -17,6 +17,7 @@ function Game() {
   const { gameId } = useParams();
   const playerId = localStorage.getItem("playerId") || "default";
   const { data } = useGetGame(gameId || "");
+  const currentPlayer = data?.players.find((p) => p.playerId === playerId);
   const { mutateAsync } = useMakeGuess();
   const queryClient = useQueryClient();
   const connectionRef = useRef<HubConnection | null>(null);
@@ -75,7 +76,7 @@ function Game() {
     };
   }, [data?.mode, gameId, playerId, queryClient]);
 
-  if(data?.mode === "Multiplayer" && data?.players.length < 2) {
+  if (data?.mode === "Multiplayer" && data?.players.length < 2) {
     return (
       <div className={classes.game}>
         <button
@@ -86,11 +87,11 @@ function Game() {
           Back
         </button>
         <div className={classes["game-wrapper"]}>
-          <h1 className={classes["game-title"]}>
-            Waiting for player 2...
-          </h1>
+          <h1 className={classes["game-title"]}>Waiting for player 2...</h1>
           <h2>Send them the game id:</h2>
-            <p className={classes["game-id"]}>{gameId}</p>
+          <p className={classes["game-id"]}>{gameId}</p>
+          <h2>or full url: </h2>
+          <p className={classes["game-id"]}>{window.location.href}</p>
         </div>
       </div>
     );
@@ -144,8 +145,10 @@ function Game() {
           <Keyboard
             isGameOver={data?.isGameOver}
             disableKeys={
-              currentGuess.length !== 0 &&
-              currentGuess.length === (data?.isFromApi ? data?.wordLength : 5)
+              (currentGuess.length !== 0 &&
+                currentGuess.length ===
+                  (data?.isFromApi ? data?.wordLength : 5)) ||
+              currentPlayer?.guesses.length === (data?.maxAttempts || 5)
             }
             setGuess={setCurrentGuess}
             onEnter={handleEnter}
