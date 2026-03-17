@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { GameState } from '../Components/Game/types';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { API_URL } from '../constants';
+import { ENDPOINTS } from '../constants';
 
 interface StartParams {
   WordLength: number;
@@ -16,7 +16,7 @@ interface StartParams {
 }
 
 const startGame = async (params: StartParams): Promise<GameState> => {
-  const response = await fetch(`${API_URL}/start`, {
+  const response = await fetch(`${ENDPOINTS.START_GAME}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
